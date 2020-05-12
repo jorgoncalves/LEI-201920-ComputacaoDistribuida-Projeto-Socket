@@ -5,7 +5,11 @@
   news.on('item', data => {
     console.log(data);
   })
-  news.on('news', () => {
-    news.emit('woot');
+  news.on('news', (data) => {
+    console.log(data);
+
+    news.emit('woot', {
+      "say": "woot"
+    });
   });
 </script>
