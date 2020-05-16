@@ -1,7 +1,7 @@
-const axios = require('axios');
-
-const constants = require('./util/rest-address');
 const { catchAsync } = require('./util/catchAsync');
+const { getAllClientes, createCliente } = require('./util/restCall-Clientes');
+const { getAllParques, createParque } = require('./util/restCall-Parques');
+const {getAllRegistos,createRegisto} = require('./util/restCall-Registos');
 
 const io = require('socket.io')(80);
 
@@ -15,42 +15,23 @@ const clients = io.of('/clients').on('connection', (socket) => {
   });
 
   socket.on('getAllClients', async () => {
-    const response = await Promise.resolve(getAllClients());
+    const response = await Promise.resolve(getAllClientes());
     console.log(response);
     socket.emit('responseGetAll', response);
-    
   });
 });
-const news = io.of('/news').on('connection', (socket) => {
-  socket.emit('item', { news: 'item' });
-  socket.emit('news', { hello: 'world' });
-  socket.on('woot', (data) => {
-    console.log(data);
+const parques = io.of('/parques').on('connection', (socket) => {
+  socket.on('getAllParques', async () => {
+    const responseParque = await Promise.resolve(getAllParques());
+    console.log(responseParque);
+    socket.emit('responseGetAllParque', responseParque);
   });
 });
 
-const getAllClients = async () => {
-  const response = await axios(constants.clients, {
-    method: 'GET',
+const registos = io.of('/registos').on('connection', (socket) => {
+  socket.on('getAllRegistos', async () => {
+    const responseRegistos = await Promise.resolve(getAllRegistos());
+    console.log(responseRegistos);
+    socket.emit('responseGetAllRegistos', responseRegistos);
   });
-  return {
-    status: response.status,
-    statusText: response.statusText,
-    data: response.data,
-  };
-};
-
-const createCliente = async (data) => {
-  const response = await axios(constants.clients, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: data,
-  });
-  return {
-    status: response.status,
-    statusText: response.statusText,
-    data: response.data,
-  };
-};
+});
