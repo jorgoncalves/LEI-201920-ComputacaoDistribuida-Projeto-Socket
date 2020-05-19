@@ -27,3 +27,18 @@ exports.createRegisto = async (data) => {
     data: response.data,
   };
 };
+
+exports.updateRegisto = async (data) => {
+  const response = await axios(`${constants.registos}/${data.idRegisto}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: data,
+  });
+  return {
+    status: response.status,
+    statusText: response.statusText,
+    data: response.data,
+  };
+};
