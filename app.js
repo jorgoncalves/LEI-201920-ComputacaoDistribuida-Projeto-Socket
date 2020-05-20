@@ -9,7 +9,12 @@ const {
 
 const io = require('socket.io')(80);
 
-const clients = io.of('/clients').on('connection', (socket) => {
+const clients = io.of('/clients').on('connection', async (socket) => {
+  socket.on('getAllClients', async () => {
+    console.log('getAllClients');
+    const response = await Promise.resolve(getAllClientes());
+    socket.emit('responseGetAll', response);
+  });
   // manda para todos. Identico ao broadcast?
   socket.on('formSubmit', async (data) => {
     console.log(data);
@@ -17,24 +22,28 @@ const clients = io.of('/clients').on('connection', (socket) => {
     console.log(response);
     socket.emit('response', response);
   });
-
-  socket.on('getAllClients', async () => {
-    const response = await Promise.resolve(getAllClientes());
-    socket.emit('responseGetAll', response);
-  });
 });
-const parques = io.of('/parques').on('connection', (socket) => {
+const parques = io.of('/parques').on('connection', async (socket) => {
   socket.on('getAllParques', async () => {
+    console.log('getAllParques');
     const responseParque = await Promise.resolve(getAllParques());
     socket.emit('responseGetAllParque', responseParque);
+  });
+
+  socket.on('formSubmit', async (data) => {
+    socket.emit('responsePark', { hello: 'world' });
+    console.log(data);
+    const respCreateParque = await Promise.resolve(createParque(data));
+    socket.emit('respCreateParque', respCreateParque);
   });
 });
 
 const registos = io.of('/registos').on('connection', async (socket) => {
-  // socket.on('getAllRegistos', async () => {
-  const responseRegistos = await Promise.resolve(getAllRegistos());
-  socket.emit('responseGetAllRegistos', responseRegistos);
-  // });
+  socket.on('getAllRegistos', async () => {
+    console.log('getAllRegistos');
+    const responseRegistos = await Promise.resolve(getAllRegistos());
+    socket.emit('responseGetAllRegistos', responseRegistos);
+  });
   socket.on('createNewRegisto', async (data) => {
     console.log(data);
     const responseNewRegistos = await Promise.resolve(createRegisto(data));
