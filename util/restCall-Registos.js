@@ -13,6 +13,21 @@ exports.getAllRegistos = async () => {
   };
 };
 
+exports.getRegisto = async (data) => {
+  const response = await axios(`${constants.registos}/findRegister`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: data,
+  });
+  return {
+    status: response.status,
+    statusText: response.statusText,
+    data: response.data,
+  };
+};
+
 exports.createRegisto = async (data) => {
   const response = await axios(constants.registos, {
     method: 'POST',
