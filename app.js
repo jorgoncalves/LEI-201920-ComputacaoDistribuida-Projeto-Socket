@@ -5,15 +5,21 @@ const {
   findCliente,
   updateCliente,
   clientHistory,
+  deleteClient,
 } = require('./util/restCall-Clientes');
-const { getAllParques, createParque } = require('./util/restCall-Parques');
+const {
+  getAllParques,
+  findPark,
+  createParque,
+  updateParque,
+} = require('./util/restCall-Parques');
 const {
   getAllRegistos,
   createRegisto,
   updateRegisto,
   getRegisto,
 } = require('./util/restCall-Registos');
-const { login, signup } = require('./util/restCall-Login');
+const { login, signup } = require('./util/restCall-Auth');
 
 const io = require('socket.io')(80);
 
@@ -58,6 +64,12 @@ const clients = io.of('/clients').on('connection', async (socket) => {
     socket.emit('responseUpdate', response);
   });
 
+  socket.on('deleteClient', async (data) => {
+    const response = await Promise.resolve(deleteClient(data));
+    console.log(response);
+    socket.emit('responseDelete', response);
+  });
+
   socket.on('getClientHistory', async (data) => {
     console.log('getClientHistory', data);
     const response = await Promise.resolve(clientHistory(data));
@@ -66,12 +78,26 @@ const clients = io.of('/clients').on('connection', async (socket) => {
   });
 });
 const parques = io.of('/parques').on('connection', async (socket) => {
-  socket.on('getAllParques', async () => {
-    console.log('getAllParques');
-    const responseParque = await Promise.resolve(getAllParques());
+  socket.on('getAllParques', async (data) => {
+    console.log('getAllParques', data);
+    const responseParque = await Promise.resolve(getAllParques(data));
     console.log(responseParque);
 
     socket.emit('responseGetAllParque', responseParque);
+  });
+
+  socket.on('findPark', async (data) => {
+    console.log('findPark', data);
+    const responseParque = await Promise.resolve(findPark(data));
+    console.log(responseParque);
+
+    socket.emit('responseFindPark', responseParque);
+  });
+
+  socket.on('formSubmitUpdate', async (data) => {
+    console.log(data);
+    const respUpdateParque = await Promise.resolve(updateParque(data));
+    socket.emit('respUpdateParque', respUpdateParque);
   });
 
   socket.on('formSubmit', async (data) => {

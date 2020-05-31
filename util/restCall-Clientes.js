@@ -76,6 +76,21 @@ exports.findCliente = async (data) => {
   };
 };
 
+exports.deleteClient = async (data) => {
+  const response = await axios(`${constants.clients}/${data._id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return {
+    status: response.status,
+    statusText: response.statusText,
+    message: response.message,
+    data: response.data,
+  };
+};
+
 exports.clientHistory = async (data) => {
   const response = await axios(`${constants.clients}/history/${data._id}`, {
     method: 'GET',
